@@ -1,4 +1,4 @@
-FROM drupal:11.0.11-php8.4-apache-bookworm
+FROM drupal:11.0.12-php8.3-apache-bookworm
 
 # Drushインストール
 RUN composer require drush/drush \
