@@ -1,0 +1,39 @@
+services:
+  mysql:
+    image: mysql:lts
+    volumes:
+      - mysql8data:/var/lib/mysql
+      - ./dump:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_RANDOM_ROOT_PASSWORD: 1
+  drupal:
+    build: ./
+    volumes:
+      - ./web/themes:/var/www/html/themes
+      - ./web/modules:/var/www/html/modules
+      - ./web/sites:/var/www/html/sites
+      - ./config:/opt/drupal/config
+      - ./composer.json:/opt/drupal/composer.json
+      - ./composer.lock:/opt/drupal/composer.lock
+    entrypoint: "sh /tmp/docker-entrypoint.sh"
+    command: "apache2-foreground"
+    environment:
+      PROFILE: "minimal"
+      ACCOUNT_NAME: ${ACCOUNT_NAME}
+      ACCOUNT_PASS: ${ACCOUNT_PASS}
+      ACCOUNT_MAIL: ${ACCOUNT_MAIL}
+      SITE_MAIL: ${SITE_MAIL}
+      SITE_NAME: ${SITE_NAME}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - "80:80"
+    depends_on:
+      - mysql
+
+volumes:
+  mysql8data: {}
